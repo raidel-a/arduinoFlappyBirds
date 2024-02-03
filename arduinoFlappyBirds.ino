@@ -45,16 +45,16 @@ byte birdAnim[8] = {
     0b11110,
     0b11110,
     0b01100,
-    0b00000};
+    0b01000};
 
 byte hit[8] = { // Define the hit marker
     0b10001,
-    0b01010,
+    0b11011,
     0b01010,
     0b00100,
     0b00100,
     0b01010,
-    0b01010,
+    0b11011,
     0b10001};
 
 byte heart[8] = { // Define the heart symbol
@@ -62,10 +62,10 @@ byte heart[8] = { // Define the heart symbol
     0b01010,
     0b11111,
     0b11111,
-    0b01110,
+    0b11111,
     0b01110,
     0b00100,
-    0b00000};
+    0b00100};
 
 int pipes[16];       // Array to store the pipe positions
 int birdY = 2;       // Initial bird position on the Y-axis
@@ -206,8 +206,8 @@ void loop()
     // Display the start screen
 
     lcd.setCursor(1, 0);
-    lcd.write(1); // Display the bird
-    delay(300);
+    lcd.write(4); // Display the bird
+    delay(300); // in milliseconds
     
 
     lcd.setCursor(3, 0);           // Set the cursor position on the LCD display
@@ -216,7 +216,7 @@ void loop()
     lcd.print("Press the button"); // Display "Press the button"
 
 lcd.setCursor(1, 0);
-    lcd.write(4); // Display the bird animation
+    lcd.write(1); // Display the bird animation
     delay(100);
 
     // Check if the button is pressed
