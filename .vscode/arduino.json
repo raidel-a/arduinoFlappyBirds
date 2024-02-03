@@ -1,0 +1,6 @@
+{
+    "board": "arduino:avr:uno",
+    "programmer": "avrispmkii",
+    "port": "COM7",
+    "sketch": "arduinoFlappyBirds.ino"
+}
