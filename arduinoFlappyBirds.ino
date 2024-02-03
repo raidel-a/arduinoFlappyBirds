@@ -27,6 +27,16 @@ byte pipe[8] = { // Define the pipe obstacl
     0b01110,
     0b01110};
 
+byte pipeInv[8] = {
+    0b01110,
+    0b01110,
+    0b01110,
+    0b01110,
+    0b01110,
+    0b11111,
+    0b11111,
+    0b00000};
+
 byte bird[8] = { // Define the bird character
     0b00000,
     0b00110,
@@ -71,7 +81,7 @@ int pipes[16];       // Array to store the pipe positions
 int birdY = 2;       // Initial bird position on the Y-axis
 int birdX = 7;       // Initial bird position on the X-axis
 int score = 0;       // Current score
-int speedlvl = 1400; // Speed of pipes// byte bird[8] = { // Define the bird character
+int speedlvl = 1300; // Speed of pipes
 
 int life = 3; // Number of lives
 
@@ -89,6 +99,7 @@ void setup()
   lcd.createChar(2, hit);   // Create the hit character
   lcd.createChar(3, heart); // Create the heart character
   lcd.createChar(4, birdAnim);
+  lcd.createChar(4, pipeInv); 
 
   pinMode(buttonPin, INPUT_PULLUP); // Set the button pin as an input and enable the internal pull-up resistor
 }
@@ -135,12 +146,14 @@ void birdfly()
 
 void checkCollision()
 {
-  if (pipes[birdX] == 1 && birdY != 0)
+  if (pipes[birdX] == 1 
+  // && birdY != 0
+  )
   { // If the bird hits a pipe and it is not at the top position
     lcd.setCursor(birdX, birdY);
-    lcd.write(2);   // Display the hit marker
-    life--;         // Decrease the number of lives
-    score -= 5;     // Decrease the score by 5
+    lcd.write(2); // Display the hit marker
+    life--;       // Decrease the number of lives
+    score -= 5;   // Decrease the score by 5
   }
 }
 
@@ -149,8 +162,15 @@ void movePipes()
   int dist = random(0, 2); // Generate a random number to determine the pipe distance
   // Move the pipes along the screen
   int i;
-  for (i = 1; i < 16; i++)
-  {
+  for (i = 0; i < 16; i++) {
+    if (pipes[i] != 0) {
+      lcd.setCursor(i, 0);
+      lcd.write((byte)4); // Display the inverted pipe at the top
+      lcd.setCursor(i, 1);
+      lcd.write((byte)0); // Display the regular pipe at the bottom
+    }
+  }
+  for (i = 1; i < 16; i++) {
     pipes[i - 1] = pipes[i]; // Move the pipes to the left
   }
 
@@ -191,8 +211,8 @@ void showLives()
 
 void showScore()
 {
-  lcd.setCursor(13, 0); // Set the cursor position on the LCD display
-  lcd.print(score);     // Display the score
+  lcd.setCursor(3, 0); // Set the cursor position on the LCD display
+  lcd.print(score);    // Display the score
 }
 
 bool gameStarted = false;
@@ -207,15 +227,14 @@ void loop()
 
     lcd.setCursor(1, 0);
     lcd.write(4); // Display the bird
-    delay(300); // in milliseconds
-    
+    delay(300);   // in milliseconds
 
     lcd.setCursor(3, 0);           // Set the cursor position on the LCD display
     lcd.print("Flappy Bird");      // Display "Flappy Bird"
     lcd.setCursor(0, 1);           // Set the cursor position on the LCD display
     lcd.print("Press the button"); // Display "Press the button"
 
-lcd.setCursor(1, 0);
+    lcd.setCursor(1, 0);
     lcd.write(1); // Display the bird animation
     delay(100);
 
