@@ -92,7 +92,7 @@ int coins[16] = {0}; // Array to store the coin positions
 int birdY = 2;       // Initial bird position on the Y-axis
 int birdX = 7;       // Initial bird position on the X-axis
 int score = 0;       // Current score
-int speedlvl = 1300; // Speed of pipes
+int speedlvl = 1200; // Speed of pipes
 int life = 3;        // Number of lives
 
 void setup()
