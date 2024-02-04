@@ -27,7 +27,7 @@ byte pipe[8] = { // Define the pipe obstacl
     0b01110,
     0b01110};
 
-byte pipeInv[8] = {
+byte pipeInverted[8] = {
     0b01110,
     0b01110,
     0b01110,
@@ -77,13 +77,23 @@ byte heart[8] = { // Define the heart symbol
     0b00100,
     0b00100};
 
+byte coin[8] = { // Define the coin symbol
+    0b00000,
+    0b01110,
+    0b11011,
+    0b11111,
+    0b11011,
+    0b11011,
+    0b01110,
+    0b00000};
+
 int pipes[16];       // Array to store the pipe positions
+int coins[16] = {0}; // Array to store the coin positions
 int birdY = 2;       // Initial bird position on the Y-axis
 int birdX = 7;       // Initial bird position on the X-axis
 int score = 0;       // Current score
 int speedlvl = 1300; // Speed of pipes
-
-int life = 3; // Number of lives
+int life = 3;        // Number of lives
 
 void setup()
 {
@@ -99,7 +109,7 @@ void setup()
   lcd.createChar(2, hit);   // Create the hit character
   lcd.createChar(3, heart); // Create the heart character
   lcd.createChar(4, birdAnim);
-  lcd.createChar(4, pipeInv); 
+  lcd.createChar(6, coin); // Create the coin character
 
   pinMode(buttonPin, INPUT_PULLUP); // Set the button pin as an input and enable the internal pull-up resistor
 }
@@ -146,55 +156,50 @@ void birdfly()
 
 void checkCollision()
 {
-  if (pipes[birdX] == 1 
-  // && birdY != 0
-  )
+  if (pipes[birdX] == 1 && birdY != 0)
   { // If the bird hits a pipe and it is not at the top position
     lcd.setCursor(birdX, birdY);
     lcd.write(2); // Display the hit marker
     life--;       // Decrease the number of lives
     score -= 5;   // Decrease the score by 5
   }
+  else if (coins[birdX] == 1)
+  { // If the bird hits a coin
+    lcd.setCursor(birdX, birdY);
+    lcd.write(1); // Display the bird
+    coins[birdX] = 0; // Remove the coin
+    score += 2; // Increase the score by 2
+  }
 }
 
 void movePipes()
 {
-  int dist = random(0, 2); // Generate a random number to determine the pipe distance
-  // Move the pipes along the screen
-  int i;
-  for (i = 0; i < 16; i++) {
-    if (pipes[i] != 0) {
-      lcd.setCursor(i, 0);
-      lcd.write((byte)4); // Display the inverted pipe at the top
-      lcd.setCursor(i, 1);
-      lcd.write((byte)0); // Display the regular pipe at the bottom
-    }
-  }
-  for (i = 1; i < 16; i++) {
+  // Move the pipes and coins to the left
+  for (int i = 1; i < 16; i++)
+  {
     pipes[i - 1] = pipes[i]; // Move the pipes to the left
+    coins[i - 1] = coins[i]; // Move the coins to the left
   }
 
-  if (dist == 1 && (pipes[16] == 2 || pipes[13] == 1))
-  {
-    pipes[15] = 0; // Set the pipe position to 0
-  }
-  else
-  {
-    pipes[15] = random(0, 2);
+  // Generate new pipes and possibly a coin at the right side of the screen
+  if (random(10) < 2) { // 20% chance to generate a coin
+    coins[15] = 1; // Coin
+    pipes[15] = 0; // No pipe
+  } else {
+    pipes[15] = random(0, 2); // Pipe or gap
+    coins[15] = 0; // No coin
   }
 
-  // for (i = 0; i < 16; i++) {
-  // if (pipes[i] != 0) {
-  // lcd.setCursor(i, 1);  // Set the cursor position on the LCD display
-  // lcd.write((byte)0);   // Display the pipe obstacle
-  // }
-  //}
-  for (i = 0; i < 16; i++)
+  // Draw the pipes and coins
+  for (int i = 0; i < 16; i++)
   {
-    if (pipes[i] != 0)
-    {
-      lcd.setCursor(i, 1);
+    lcd.setCursor(i, 1);
+    if (pipes[i] != 0) {
       lcd.write((byte)0); // Display the pipe
+    } else if (coins[i] == 1) {
+      lcd.write((byte)6); // Display the coin
+    } else {
+      lcd.write(' '); // No pipe or coin
     }
   }
 }
