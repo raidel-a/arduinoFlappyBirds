@@ -17,7 +17,7 @@ LiquidCrystal lcd(12, 11, 5, 4, 3, 2); // Initialize the LCD display
 // By defining the pipe character in this way, it can be easily displayed on the LCD screen by sending the corresponding byte values to the LCD library.
 // The LCD library will interpret these byte values and display the custom character accordingly.
 
-byte pipe[8] = { // Define the pipe obstacl
+byte pipe[8] = { // Define the pipe obstacle
     0b00000,
     0b11111,
     0b11111,
@@ -92,7 +92,7 @@ int coins[16] = {0}; // Array to store the coin positions
 int birdY = 2;       // Initial bird position on the Y-axis
 int birdX = 7;       // Initial bird position on the X-axis
 int score = 0;       // Current score
-int speedlvl = 1200; // Speed of pipes
+int speedlvl = 300; // Speed of pipes
 int life = 3;        // Number of lives
 
 void setup()
@@ -156,7 +156,9 @@ void birdfly()
 
 void checkCollision()
 {
-  if (pipes[birdX] == 1 && birdY != 0)
+  if (pipes[birdX] == 1 
+  // && birdY != 0
+  )
   { // If the bird hits a pipe and it is not at the top position
     lcd.setCursor(birdX, birdY);
     lcd.write(2); // Display the hit marker
