@@ -1,0 +1,87 @@
+{
+  "editor.tokenColorCustomizations": {
+    "textMateRules": [
+      {
+        "scope": [
+          "comment",
+          "keyword.control.import.js",
+          "keyword.control.export.js",
+          "keyword.control.from.js",
+          "constant",
+          "storage.modifier",
+          "storage.type.class",
+          "storage.type.php",
+          "keyword.other.new.php",
+          "entity.other.attribute-name",
+          "fenced_code.block.language.markdown"
+        ],
+        "settings": {
+          "fontStyle": "italic"
+        }
+      },
+      {
+        "scope": [
+          "entity.name.type.class"
+        ],
+        "settings": {
+          "fontStyle": "bold"
+        }
+      },
+      {
+        "scope": [
+          "entity.name.section.markdown"
+        ],
+        "settings": {
+          "fontStyle": "italic bold"
+        }
+      },
+      {
+        "scope": [
+          "invalid",
+          "keyword.operator",
+          "constant.numeric.css",
+          "keyword.other.unit.px.css",
+          "constant.numeric.decimal.js",
+          "constant.numeric.json",
+          "comment.block",
+          "entity.other.attribute-name.class.css"
+        ],
+        "settings": {
+          "fontStyle": ""
+        }
+      },
+      {
+        "scope": [
+          "hidecomments",
+          "comment",
+          "comment.block",
+          "comment.line",
+          "comment.line.double-slash",
+          "variable.other.jsdoc",
+          "storage.type.class.jsdoc",
+          "punctuation.definition.block.tag.jsdoc",
+          "punctuation.definition.bracket.curly.begin.jsdoc",
+          "punctuation.definition.bracket.curly.end.jsdoc",
+          "entity.name.type.instance.jsdoc",
+          "comment.block.documentation.ts",
+          "comment.block.documentation.js",
+          "comment.block.documentation.cs",
+          "comment.block.documentation.cs entity.other.attribute-name.localname.cs",
+          "comment.block.documentation.cs entity.other.attribute-name.cs",
+          "comment.block.documentation.cs punctuation.definition.tag.cs",
+          "comment.block.documentation.cs punctuation.definition.string.begin.cs",
+          "comment.block.documentation.cs punctuation.definition.string.end.cs",
+          "comment.block.documentation.cs punctuation.definition.bracket.curly.begin.cs",
+          "comment.block.documentation.cs punctuation.definition.bracket.curly.end.cs",
+          "comment.block.documentation.cs punctuation.definition.block.tag.cs",
+          "comment.block.documentation.cs string.quoted.double.cs",
+          "comment.block.documentation.cs entity.name.tag.localname.cs"
+        ],
+        "settings": {
+          "foreground": "#00000000"
+        }
+      }
+    ],
+    "comments": "#00000000"
+  }
+}

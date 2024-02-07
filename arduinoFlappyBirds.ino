@@ -27,7 +27,7 @@ byte pipe[8] = { // Define the pipe obstacle
     0b01110,
     0b01110};
 
-byte pipeInverted[8] = {
+byte pipeTop[8] = {
     0b01110,
     0b01110,
     0b01110,
@@ -47,7 +47,7 @@ byte bird[8] = { // Define the bird character
     0b00000,
     0b00000};
 
-byte birdAnim[8] = {
+byte birdAnim[8] = { // Bird animation/shifted y -2
     0b00000,
     0b00000,
     0b00110,
@@ -87,14 +87,14 @@ byte coin[8] = { // Define the coin symbol
     0b01110,
     0b00000};
 
-int pipes[16];               // Array to store the pipe positions
-int invertedPipes[16] = {0}; // Array to store the inverted pipe positions
-int coins[16] = {0};         // Array to store the coin positions
-int birdY = 2;               // Initial bird position on the Y-axis
-int birdX = 7;               // Initial bird position on the X-axis
-int score = 0;               // Current score
-int speedlvl = 300;          // Speed of pipes
-int life = 3;                // Number of lives
+int pipes[16];          // Array to store the pipe positions
+int topPipes[16] = {0}; // Array to store the Top pipe positions
+int coins[16] = {0};    // Array to store the coin positions
+int birdY = 2;          // Initial bird position on the Y-axis
+int birdX = 7;          // Initial bird position on the X-axis
+int score = 0;          // Current score
+int speed = 600;        // Speed of pipes
+int life = 3;           // Number of lives
 
 void setup()
 {
@@ -107,12 +107,12 @@ void setup()
 
   lcd.createChar(0, pipe); // Create the pipe character
 
-  lcd.createChar(1, bird);         // Create the bird character
-  lcd.createChar(2, hit);          // Create the hit character
-  lcd.createChar(3, heart);        // Create the heart character
-  lcd.createChar(4, birdAnim);     // Create the bird animation character
-  lcd.createChar(5, pipeInverted); // Create the inverted pipe character
-  lcd.createChar(6, coin);         // Create the coin character
+  lcd.createChar(1, bird);     // Create the bird character
+  lcd.createChar(2, hit);      // Create the hit character
+  lcd.createChar(3, heart);    // Create the heart character
+  lcd.createChar(4, birdAnim); // Create the bird animation character
+  lcd.createChar(5, pipeTop);  // Create the Top pipe character
+  lcd.createChar(6, coin);     // Create the coin character
 
   pinMode(buttonPin, INPUT_PULLUP); // Set the button pin as an input and enable the internal pull-up resistor
 }
@@ -159,8 +159,8 @@ void birdfly()
 
 void checkCollision()
 {
-  if ((pipes[birdX] == 1 && birdY != 0) || (invertedPipes[birdX] == 1 && birdY == 0))
-  { // If the bird hits a pipe or an inverted pipe
+  if ((pipes[birdX] == 1 && birdY != 0) || (topPipes[birdX] == 1 && birdY == 0))
+  { // If the bird hits a pipe or a Top pipe
     lcd.setCursor(birdX, birdY);
     lcd.write(2); // Display the hit marker
     life--;       // Decrease the number of lives
@@ -171,75 +171,61 @@ void checkCollision()
     lcd.setCursor(birdX, birdY);
     lcd.write(1);     // Display the bird
     coins[birdX] = 0; // Remove the coin
-    score += 2;       // Increase the score by 2
+    score += 5;       // Increase the score by 2
   }
 }
 
 void movePipes()
 {
-  // Move the pipes, inverted pipes, and coins to the left
+  // Move the pipes, top pipes, and coins to the left
   for (int i = 1; i < 16; i++)
   {
     pipes[i - 1] = pipes[i];
-    invertedPipes[i - 1] = invertedPipes[i];
+    topPipes[i - 1] = topPipes[i];
     coins[i - 1] = coins[i];
   }
 
-  // Generate new pipes, inverted pipes, and possibly a coin at the right side of the screen
-  // Ensure there are at least two spaces between the regular and inverted pipes
-  if (pipes[13] == 0 && invertedPipes[13] == 0 && pipes[14] == 0 && invertedPipes[14] == 0)
+  // Generate new pipes, top pipes, and possibly a coin at the right side of the screen
+  // Ensure there is at least one space between the regular and top pipes
+  if (pipes[14] == 0 && topPipes[14] == 0)
   {
-    if (random(2) == 0)
-    {
+    if(random(2) == 0) {
       pipes[15] = random(0, 2); // 50% chance to generate a regular pipe
-      invertedPipes[15] = 0;
-    }
-    else
-    {
-      invertedPipes[15] = random(0, 2); // 50% chance to generate an inverted pipe
+      topPipes[15] = 0;
+    } else {
+      topPipes[15] = random(0, 2); // 50% chance to generate a top pipe
       pipes[15] = 0;
     }
-    // Generate a coin only if there is no pipe at the same position
-    if (pipes[15] == 0 && invertedPipes[15] == 0)
-    {
+    // Generate a coin only if there is no pipe or top pipe at the same position
+    if(pipes[15] == 0 && topPipes[15] == 0) {
       coins[15] = random(0, 2); // 50% chance to generate a coin
-    }
-    else
-    {
+    } else {
       coins[15] = 0;
     }
   }
   else
   {
     pipes[15] = 0;
-    invertedPipes[15] = 0;
+    topPipes[15] = 0;
     coins[15] = 0;
   }
 
-  // Draw the pipes, inverted pipes, and coins
+  // Draw the pipes, top pipes, and coins
   for (int i = 0; i < 16; i++)
   {
     lcd.setCursor(i, 0);
-    if (invertedPipes[i] == 1)
-    {
-      lcd.write((byte)5); // Display the inverted pipe
-    }
-    else if (coins[i] == 1)
-    {
+    if (topPipes[i] == 1) {
+      lcd.write((byte)5); // Display the top pipe
+    } else if (coins[i] == 1) {
       lcd.write((byte)6); // Display the coin
-    }
-    else
-    {
-      lcd.write(' '); // No inverted pipe or coin
+    } else {
+      lcd.write(' '); // No top pipe or coin
     }
 
     lcd.setCursor(i, 1);
-    if (pipes[i] == 1)
-    {
+    if (pipes[i] == 1) {
       lcd.write((byte)0); // Display the pipe
-    }
-    else
-    {
+    } else {
       lcd.write(' '); // No pipe
     }
   }
@@ -299,7 +285,7 @@ void loop()
     showScore();
     checkCollision();
     score++;
-    speedlvl--; // Decrease the speed level
+    speed--; // Decrease the speed level
   }
   else
   {
@@ -310,5 +296,5 @@ void loop()
     lcd.print(score); // Display the final score
   }
 
-  delay(speedlvl); // Delay for the specified speed level
+  delay(speed); // Delay for the specified speed level
 }
