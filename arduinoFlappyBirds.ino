@@ -2,6 +2,8 @@
 #include <LiquidCrystal.h>
 // #include <LiquidCrystal_I2C.h>
 
+// LiquidCrystal_I2C lcd(0x27, 16, 2);
+
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2); // Initialize the LCD display
 
 #define buttonPin 8 // Define the button pin, tells the arduino what pin the button is connected to
@@ -131,17 +133,8 @@ void birdfly()
   {
     birdY = 1;  // Move the bird down
     charId = 1; // Set the character ID to display the bird
-    // if (pipes[birdX] == 1) {  // If the bird hits a pipe, does this by checking if the pipe is at the same position as the bird
-    //   // charId = 2;             // Set the character ID to display the hit character
-    //   lcd.setCursor(birdX, birdY);
-    //   lcd.write(2); // Display the hit marker
-    //   life--;                 // Decrease the number of lives
-    //   score--;                // Decrease the score
-    // }
   }
 
-  // lcd.setCursor(birdX, birdY);  // Set the cursor position on the LCD display
-  // lcd.write((byte)charId);      // Display the character
   if (birdY == 0)
   {
     lcd.setCursor(birdX, birdY);
@@ -160,7 +153,9 @@ void birdfly()
 void checkCollision()
 {
   if ((pipes[birdX] == 1 && birdY != 0) || (topPipes[birdX] == 1 && birdY == 0))
-  { // If the bird hits a pipe or a Top pipe
+  { // if the bird has hit a pipe, 
+    // either a regular one when it's not at the bottom, 
+    // or a top one when it is at the bottom.
     lcd.setCursor(birdX, birdY);
     lcd.write(2); // Display the hit marker
     life--;       // Decrease the number of lives
