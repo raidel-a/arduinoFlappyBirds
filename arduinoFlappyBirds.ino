@@ -1,6 +1,6 @@
 #include <Wire.h>
 #include <rgb_lcd.h>
-#include "pitches.h"
+#include "notes.h"
 
 rgb_lcd lcd;
 
