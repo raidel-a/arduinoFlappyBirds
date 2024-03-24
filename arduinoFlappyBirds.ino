@@ -4,16 +4,20 @@
 
 rgb_lcd lcd;
 
-#define buttonPin 4
-#define BUZZER_PIN 8
+#define BUTTON_PIN 4
+#define BUZZER_PIN 3
+#define GREEN_LED_PIN 2
+#define RED_LED_PIN 7
 
 bool hasPlayedDeadChime = false;
-void startupChime() {
-  tone(BUZZER_PIN, 1000); // Play a 1kHz tone
-  delay(100); // Wait for 100ms
-  noTone(BUZZER_PIN); // Stop the tone
+
+void playStartupChime() {
+  tone(BUZZER_PIN, 1000);
+  delay(100); 
+  noTone(BUZZER_PIN);
 }
-void coinChime() {
+
+void playCoinChime() {
   tone(BUZZER_PIN, NOTE_B5);
   delay(200);
   noTone(BUZZER_PIN);
@@ -21,7 +25,8 @@ void coinChime() {
   delay(400);
   noTone(BUZZER_PIN);
 }
-void collisionChime() {
+
+void playCollisionChime() {
   tone(BUZZER_PIN, NOTE_A4);
   delay(300);
   noTone(BUZZER_PIN);
@@ -29,39 +34,41 @@ void collisionChime() {
   delay(200);
   noTone(BUZZER_PIN);
 }
-void deadChime() {
-  if (!hasPlayedDeadChime){
-  tone(BUZZER_PIN, NOTE_B5);
-  delay(300);
-  noTone(BUZZER_PIN);
-  tone(BUZZER_PIN, NOTE_F5);
-  delay(300);
-  noTone(BUZZER_PIN);
-  tone(BUZZER_PIN, NOTE_F5);
-  delay(300);
-  noTone(BUZZER_PIN);
-  tone(BUZZER_PIN, NOTE_E5);
-  delay(300);
-  noTone(BUZZER_PIN);
-  tone(BUZZER_PIN, NOTE_D4);
-  delay(300);
-  noTone(BUZZER_PIN);
-  tone(BUZZER_PIN, NOTE_C4);
-  delay(300);
-  noTone(BUZZER_PIN);
-  tone(BUZZER_PIN, NOTE_E4);
-  delay(300);
-  noTone(BUZZER_PIN);
-  tone(BUZZER_PIN, NOTE_E4);
-  delay(300);
-  noTone(BUZZER_PIN);
-  tone(BUZZER_PIN, NOTE_C4);
-  delay(300);
-  noTone(BUZZER_PIN);
-  hasPlayedDeadChime = true;
-}}
 
-byte pipe[8] = {
+void playDeadChime() {
+  if (!hasPlayedDeadChime){
+    tone(BUZZER_PIN, NOTE_B5);
+    delay(400);
+    noTone(BUZZER_PIN);
+    tone(BUZZER_PIN, NOTE_F5);
+    delay(500);
+    noTone(BUZZER_PIN);
+    tone(BUZZER_PIN, NOTE_F5);
+    delay(500);
+    noTone(BUZZER_PIN);
+    tone(BUZZER_PIN, NOTE_E5);
+    delay(400);
+    noTone(BUZZER_PIN);
+    tone(BUZZER_PIN, NOTE_D4);
+    delay(300);
+    noTone(BUZZER_PIN);
+    tone(BUZZER_PIN, NOTE_C4);
+    delay(400);
+    noTone(BUZZER_PIN);
+    tone(BUZZER_PIN, NOTE_E4);
+    delay(300);
+    noTone(BUZZER_PIN);
+    tone(BUZZER_PIN, NOTE_E4);
+    delay(200);
+    noTone(BUZZER_PIN);
+    tone(BUZZER_PIN, NOTE_C4);
+    delay(200);
+    noTone(BUZZER_PIN);
+    hasPlayedDeadChime = true;
+  }
+}
+
+byte pipeSymbol[8] = {
   0b00000,
   0b11111,
   0b11111,
@@ -72,7 +79,7 @@ byte pipe[8] = {
   0b01110
 };
 
-byte pipeTop[8] = {
+byte pipeTopSymbol[8] = {
   0b01110,
   0b01110,
   0b01110,
@@ -83,7 +90,7 @@ byte pipeTop[8] = {
   0b00000
 };
 
-byte bird[8] = {
+byte birdSymbol[8] = {
   0b00000,
   0b00110,
   0b10111,
@@ -94,7 +101,7 @@ byte bird[8] = {
   0b00000
 };
 
-byte birdAnim[8] = {
+byte birdAnimSymbol[8] = {
   0b00000,
   0b00000,
   0b00110,
@@ -105,7 +112,7 @@ byte birdAnim[8] = {
   0b01000
 };
 
-byte hit[8] = {
+byte hitSymbol[8] = {
   0b10001,
   0b11011,
   0b01010,
@@ -116,7 +123,7 @@ byte hit[8] = {
   0b10001
 };
 
-byte heart[8] = {
+byte heartSymbol[8] = {
   0b00000,
   0b01010,
   0b11111,
@@ -127,7 +134,7 @@ byte heart[8] = {
   0b00100
 };
 
-byte coin[8] = {
+byte coinSymbol[8] = {
   0b00000,
   0b01110,
   0b11011,
@@ -150,18 +157,20 @@ int life = 3;
 void setup() {
   Serial.begin(9600);
   lcd.begin(16, 2);
-  lcd.createChar(0, pipe);
-  lcd.createChar(1, bird);
-  lcd.createChar(2, hit);
-  lcd.createChar(3, heart);
-  lcd.createChar(4, birdAnim);
-  lcd.createChar(5, pipeTop);
-  lcd.createChar(6, coin);
-  pinMode(buttonPin, INPUT_PULLUP);
+  lcd.createChar(0, pipeSymbol);
+  lcd.createChar(1, birdSymbol);
+  lcd.createChar(2, hitSymbol);
+  lcd.createChar(3, heartSymbol);
+  lcd.createChar(4, birdAnimSymbol);
+  lcd.createChar(5, pipeTopSymbol);
+  lcd.createChar(6, coinSymbol);
+  pinMode(BUTTON_PIN, INPUT_PULLUP);
+  pinMode(GREEN_LED_PIN, OUTPUT);
+  pinMode(RED_LED_PIN, OUTPUT);
 }
 
-void birdfly() {
-  int buttonValue = digitalRead(buttonPin);
+void birdFly() {
+  int buttonValue = digitalRead(BUTTON_PIN);
   int charId = 0;
 
   if (buttonValue == HIGH) {
@@ -190,13 +199,29 @@ void checkCollision() {
     lcd.write(2);
     life--;
     score -= 5;
-    collisionChime();
+     
+    digitalWrite(RED_LED_PIN, HIGH);
+    delay(100);
+    playCollisionChime();
+    digitalWrite(RED_LED_PIN, LOW);
+    delay(100);
+    digitalWrite(RED_LED_PIN, HIGH);
+    delay(100);
+    digitalWrite(RED_LED_PIN, LOW);
   } else if (coins[birdX] == 1 && birdY != 1) {
     lcd.setCursor(birdX, birdY);
     lcd.write(1);
     coins[birdX] = 0;
     score += 5;
-    coinChime();
+    
+    digitalWrite(GREEN_LED_PIN, HIGH);
+    delay(100);
+    playCoinChime();
+    digitalWrite(GREEN_LED_PIN, LOW);
+    delay(100);
+    digitalWrite(GREEN_LED_PIN, HIGH);
+    delay(100);
+    digitalWrite(GREEN_LED_PIN, LOW);
   }
 }
 
@@ -276,13 +301,13 @@ void loop() {
     lcd.setCursor(1, 0);
     lcd.write(1);
     delay(100);
-    startupChime();
-    if (digitalRead(buttonPin) == HIGH) {
+    playStartupChime();
+    if (digitalRead(BUTTON_PIN) == HIGH) {
       gameStarted = true;
     }
   } else if (life > 0) {
     movePipes();
-    birdfly();
+    birdFly();
     showLives();
     showScore();
     checkCollision();
@@ -294,7 +319,8 @@ void loop() {
     lcd.setCursor(3, 1);
     lcd.print("Score: ");
     lcd.print(score);
-    deadChime();
+    playDeadChime();
+    digitalWrite(RED_LED_PIN, HIGH); 
   }
 
   delay(speed);
